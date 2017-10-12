@@ -40,17 +40,12 @@ import org.apache.tinkerpop.gremlin.tinkergraph.process.computer.TinkerGraphComp
 import org.apache.tinkerpop.gremlin.tinkergraph.process.traversal.strategy.optimization.TinkerGraphCountStrategy;
 import org.apache.tinkerpop.gremlin.tinkergraph.process.traversal.strategy.optimization.TinkerGraphStepStrategy;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
+import org.eclipse.collections.api.map.ConcurrentMutableMap;
+import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.map.mutable.ConcurrentHashMap;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
@@ -87,8 +82,8 @@ public final class TinkerGraph implements Graph {
     private final TinkerGraphFeatures features = new TinkerGraphFeatures();
 
     protected AtomicLong currentId = new AtomicLong(-1L);
-    protected Map<Object, Vertex> vertices = new ConcurrentHashMap<>();
-    protected Map<Object, Edge> edges = new ConcurrentHashMap<>();
+    protected ConcurrentMutableMap<Object, Vertex> vertices = ConcurrentHashMap.newMap();
+    protected ConcurrentMutableMap<Object, Edge> edges = ConcurrentHashMap.newMap();
 
     protected TinkerGraphVariables variables = null;
     protected TinkerGraphComputerView graphComputerView = null;

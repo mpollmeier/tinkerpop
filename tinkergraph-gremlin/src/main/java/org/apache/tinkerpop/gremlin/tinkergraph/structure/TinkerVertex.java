@@ -26,13 +26,13 @@ import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
+import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
  */
 public final class TinkerVertex extends TinkerElement implements Vertex {
 
-    protected Map<String, List<VertexProperty>> properties;
-    protected Map<String, Set<Edge>> outEdges;
-    protected Map<String, Set<Edge>> inEdges;
+    protected MutableMap<String, List<VertexProperty>> properties;
+    protected MutableMap<String, Set<Edge>> outEdges;
+    protected MutableMap<String, Set<Edge>> inEdges;
     private final TinkerGraph graph;
 
     protected TinkerVertex(final Object id, final String label, final TinkerGraph graph) {
@@ -100,7 +100,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
 
             final VertexProperty<V> vertexProperty = new TinkerVertexProperty<V>(idValue, this, key, value);
 
-            if (null == this.properties) this.properties = new HashMap<>();
+            if (null == this.properties) this.properties = Maps.mutable.empty();
             final List<VertexProperty> list = this.properties.getOrDefault(key, new ArrayList<>());
             list.add(vertexProperty);
             this.properties.put(key, list);
