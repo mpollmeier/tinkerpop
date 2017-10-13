@@ -18,6 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -26,8 +27,6 @@ import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
-import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,9 +41,9 @@ import java.util.stream.Collectors;
  */
 public final class TinkerVertex extends TinkerElement implements Vertex {
 
-    protected MutableMap<String, List<VertexProperty>> properties;
-    protected MutableMap<String, Set<Edge>> outEdges;
-    protected MutableMap<String, Set<Edge>> inEdges;
+    protected HashedMap<String, List<VertexProperty>> properties;
+    protected HashedMap<String, Set<Edge>> outEdges;
+    protected HashedMap<String, Set<Edge>> inEdges;
     private final TinkerGraph graph;
 
     protected TinkerVertex(final Object id, final String label, final TinkerGraph graph) {
@@ -100,7 +99,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
 
             final VertexProperty<V> vertexProperty = new TinkerVertexProperty<V>(idValue, this, key, value);
 
-            if (null == this.properties) this.properties = Maps.mutable.empty();
+            if (null == this.properties) this.properties = new HashedMap<>();
             final List<VertexProperty> list = this.properties.getOrDefault(key, new ArrayList<>());
             list.add(vertexProperty);
             this.properties.put(key, list);

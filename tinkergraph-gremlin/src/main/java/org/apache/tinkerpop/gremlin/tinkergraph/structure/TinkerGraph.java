@@ -18,6 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.computer.GraphComputer;
@@ -40,9 +41,6 @@ import org.apache.tinkerpop.gremlin.tinkergraph.process.computer.TinkerGraphComp
 import org.apache.tinkerpop.gremlin.tinkergraph.process.traversal.strategy.optimization.TinkerGraphCountStrategy;
 import org.apache.tinkerpop.gremlin.tinkergraph.process.traversal.strategy.optimization.TinkerGraphStepStrategy;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
-import org.eclipse.collections.api.map.ConcurrentMutableMap;
-import org.eclipse.collections.impl.factory.Maps;
-import org.eclipse.collections.impl.map.mutable.ConcurrentHashMap;
 
 import java.io.File;
 import java.util.*;
@@ -82,8 +80,8 @@ public final class TinkerGraph implements Graph {
     private final TinkerGraphFeatures features = new TinkerGraphFeatures();
 
     protected AtomicLong currentId = new AtomicLong(-1L);
-    protected ConcurrentMutableMap<Object, Vertex> vertices = ConcurrentHashMap.newMap();
-    protected ConcurrentMutableMap<Object, Edge> edges = ConcurrentHashMap.newMap();
+    protected Map<Object, Vertex> vertices = java.util.Collections.synchronizedMap(new HashedMap<>());
+    protected Map<Object, Edge> edges = java.util.Collections.synchronizedMap(new HashedMap<>());
 
     protected TinkerGraphVariables variables = null;
     protected TinkerGraphComputerView graphComputerView = null;

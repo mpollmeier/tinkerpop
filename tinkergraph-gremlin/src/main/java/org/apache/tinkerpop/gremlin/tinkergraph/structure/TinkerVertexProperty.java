@@ -18,6 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -26,8 +27,6 @@ import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.process.computer.TinkerGraphComputerView;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
-import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
  */
 public class TinkerVertexProperty<V> extends TinkerElement implements VertexProperty<V> {
 
-    protected MutableMap<String, Property> properties;
+    protected HashedMap<String, Property> properties;
     private final TinkerVertex vertex;
     private final String key;
     private final V value;
@@ -117,7 +116,7 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
     public <U> Property<U> property(final String key, final U value) {
         if (this.removed) throw elementAlreadyRemoved(VertexProperty.class, id);
         final Property<U> property = new TinkerProperty<>(this, key, value);
-        if (this.properties == null) this.properties = Maps.mutable.empty();
+        if (this.properties == null) this.properties = new HashedMap<>();
         this.properties.put(key, property);
         return property;
     }

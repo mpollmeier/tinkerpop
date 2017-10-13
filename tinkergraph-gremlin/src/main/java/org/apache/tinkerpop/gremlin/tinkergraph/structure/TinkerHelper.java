@@ -18,6 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.tinkerpop.gremlin.process.computer.GraphFilter;
 import org.apache.tinkerpop.gremlin.process.computer.VertexComputeKey;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -27,7 +28,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.tinkergraph.process.computer.TinkerGraphComputerView;
-import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +71,7 @@ public final class TinkerHelper {
     }
 
     protected static void addOutEdge(final TinkerVertex vertex, final String label, final Edge edge) {
-        if (null == vertex.outEdges) vertex.outEdges = Maps.mutable.empty();
+        if (null == vertex.outEdges) vertex.outEdges = new HashedMap<>();
         Set<Edge> edges = vertex.outEdges.get(label);
         if (null == edges) {
             edges = new HashSet<>();
@@ -81,7 +81,7 @@ public final class TinkerHelper {
     }
 
     protected static void addInEdge(final TinkerVertex vertex, final String label, final Edge edge) {
-        if (null == vertex.inEdges) vertex.inEdges = Maps.mutable.empty();
+        if (null == vertex.inEdges) vertex.inEdges = new HashedMap<>();
         Set<Edge> edges = vertex.inEdges.get(label);
         if (null == edges) {
             edges = new HashSet<>();

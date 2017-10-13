@@ -18,6 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -27,8 +28,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
-import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.factory.Maps;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  */
 public final class TinkerEdge extends TinkerElement implements Edge {
 
-    protected MutableMap<String, Property> properties;
+    protected HashedMap<String, Property> properties;
     protected final Vertex inVertex;
     protected final Vertex outVertex;
 
@@ -55,7 +54,7 @@ public final class TinkerEdge extends TinkerElement implements Edge {
         ElementHelper.validateProperty(key, value);
         final Property oldProperty = super.property(key);
         final Property<V> newProperty = new TinkerProperty<>(this, key, value);
-        if (null == this.properties) this.properties = Maps.mutable.empty();
+        if (null == this.properties) this.properties = new HashedMap<>();
         this.properties.put(key, newProperty);
         TinkerHelper.autoUpdateIndex(this, key, value, oldProperty.isPresent() ? oldProperty.value() : null);
         return newProperty;
