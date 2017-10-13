@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import org.apache.commons.collections4.map.HashedMap;
+import gnu.trove.map.hash.THashMap;
 import org.apache.tinkerpop.gremlin.process.computer.GraphFilter;
 import org.apache.tinkerpop.gremlin.process.computer.VertexComputeKey;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -71,7 +71,7 @@ public final class TinkerHelper {
     }
 
     protected static void addOutEdge(final TinkerVertex vertex, final String label, final Edge edge) {
-        if (null == vertex.outEdges) vertex.outEdges = new HashedMap<>();
+        if (null == vertex.outEdges) vertex.outEdges = new THashMap<>();
         Set<Edge> edges = vertex.outEdges.get(label);
         if (null == edges) {
             edges = new HashSet<>();
@@ -81,7 +81,7 @@ public final class TinkerHelper {
     }
 
     protected static void addInEdge(final TinkerVertex vertex, final String label, final Edge edge) {
-        if (null == vertex.inEdges) vertex.inEdges = new HashedMap<>();
+        if (null == vertex.inEdges) vertex.inEdges = new THashMap<>();
         Set<Edge> edges = vertex.inEdges.get(label);
         if (null == edges) {
             edges = new HashSet<>();

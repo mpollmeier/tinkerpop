@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import org.apache.commons.collections4.map.HashedMap;
+import gnu.trove.map.hash.THashMap;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -41,9 +41,9 @@ import java.util.stream.Collectors;
  */
 public final class TinkerVertex extends TinkerElement implements Vertex {
 
-    protected HashedMap<String, List<VertexProperty>> properties;
-    protected HashedMap<String, Set<Edge>> outEdges;
-    protected HashedMap<String, Set<Edge>> inEdges;
+    protected THashMap<String, List<VertexProperty>> properties;
+    protected THashMap<String, Set<Edge>> outEdges;
+    protected THashMap<String, Set<Edge>> inEdges;
     private final TinkerGraph graph;
 
     protected TinkerVertex(final Object id, final String label, final TinkerGraph graph) {
@@ -99,7 +99,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
 
             final VertexProperty<V> vertexProperty = new TinkerVertexProperty<V>(idValue, this, key, value);
 
-            if (null == this.properties) this.properties = new HashedMap<>();
+            if (null == this.properties) this.properties = new THashMap<>();
             final List<VertexProperty> list = this.properties.getOrDefault(key, new ArrayList<>());
             list.add(vertexProperty);
             this.properties.put(key, list);

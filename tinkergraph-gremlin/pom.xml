@@ -21,7 +21,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.tinkerpop</groupId>
         <artifactId>tinkerpop</artifactId>
-        <version>3.3.1.MP.apache-SNAPSHOT</version>
+        <version>3.3.1.MP-trove-SNAPSHOT</version>
     </parent>
     <artifactId>tinkergraph-gremlin</artifactId>
     <name>Apache TinkerPop :: TinkerGraph Gremlin</name>
@@ -36,9 +36,9 @@ limitations under the License.
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

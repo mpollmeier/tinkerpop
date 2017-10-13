@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import org.apache.commons.collections4.map.HashedMap;
+import gnu.trove.map.hash.THashMap;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 public class TinkerVertexProperty<V> extends TinkerElement implements VertexProperty<V> {
 
-    protected HashedMap<String, Property> properties;
+    protected THashMap<String, Property> properties;
     private final TinkerVertex vertex;
     private final String key;
     private final V value;
@@ -116,7 +116,7 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
     public <U> Property<U> property(final String key, final U value) {
         if (this.removed) throw elementAlreadyRemoved(VertexProperty.class, id);
         final Property<U> property = new TinkerProperty<>(this, key, value);
-        if (this.properties == null) this.properties = new HashedMap<>();
+        if (this.properties == null) this.properties = new THashMap<>();
         this.properties.put(key, property);
         return property;
     }
