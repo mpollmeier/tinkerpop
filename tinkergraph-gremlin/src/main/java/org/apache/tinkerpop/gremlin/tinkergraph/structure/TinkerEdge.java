@@ -18,7 +18,9 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import gnu.trove.map.hash.THashMap;
+//import com
+import com.koloboke.collect.map.hash.HashObjObjMap;
+import com.koloboke.collect.map.hash.HashObjObjMaps;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
  */
 public final class TinkerEdge extends TinkerElement implements Edge {
 
-    protected THashMap<String, Property> properties;
+    protected Map<String, Property> properties;
     protected final Vertex inVertex;
     protected final Vertex outVertex;
 
@@ -54,7 +56,7 @@ public final class TinkerEdge extends TinkerElement implements Edge {
         ElementHelper.validateProperty(key, value);
         final Property oldProperty = super.property(key);
         final Property<V> newProperty = new TinkerProperty<>(this, key, value);
-        if (null == this.properties) this.properties = new THashMap<>();
+        if (null == this.properties) this.properties = HashObjObjMaps.newMutableMap();
         this.properties.put(key, newProperty);
         TinkerHelper.autoUpdateIndex(this, key, value, oldProperty.isPresent() ? oldProperty.value() : null);
         return newProperty;

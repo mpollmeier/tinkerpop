@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import gnu.trove.map.hash.THashMap;
+import com.koloboke.collect.map.hash.HashObjObjMaps;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -28,12 +28,7 @@ import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,9 +36,9 @@ import java.util.stream.Collectors;
  */
 public final class TinkerVertex extends TinkerElement implements Vertex {
 
-    protected THashMap<String, List<VertexProperty>> properties;
-    protected THashMap<String, Set<Edge>> outEdges;
-    protected THashMap<String, Set<Edge>> inEdges;
+    protected Map<String, List<VertexProperty>> properties;
+    protected Map<String, Set<Edge>> outEdges;
+    protected Map<String, Set<Edge>> inEdges;
     private final TinkerGraph graph;
 
     protected TinkerVertex(final Object id, final String label, final TinkerGraph graph) {
@@ -99,7 +94,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
 
             final VertexProperty<V> vertexProperty = new TinkerVertexProperty<V>(idValue, this, key, value);
 
-            if (null == this.properties) this.properties = new THashMap<>();
+            if (null == this.properties) this.properties = HashObjObjMaps.newMutableMap();
             final List<VertexProperty> list = this.properties.getOrDefault(key, new ArrayList<>());
             list.add(vertexProperty);
             this.properties.put(key, list);

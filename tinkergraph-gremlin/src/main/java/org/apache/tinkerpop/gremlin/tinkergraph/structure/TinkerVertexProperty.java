@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import gnu.trove.map.hash.THashMap;
+import com.koloboke.collect.map.hash.HashObjObjMaps;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -30,6 +30,7 @@ import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class TinkerVertexProperty<V> extends TinkerElement implements VertexProperty<V> {
 
-    protected THashMap<String, Property> properties;
+    protected Map<String, Property> properties;
     private final TinkerVertex vertex;
     private final String key;
     private final V value;
@@ -116,7 +117,7 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
     public <U> Property<U> property(final String key, final U value) {
         if (this.removed) throw elementAlreadyRemoved(VertexProperty.class, id);
         final Property<U> property = new TinkerProperty<>(this, key, value);
-        if (this.properties == null) this.properties = new THashMap<>();
+        if (this.properties == null) this.properties = HashObjObjMaps.newMutableMap();
         this.properties.put(key, property);
         return property;
     }

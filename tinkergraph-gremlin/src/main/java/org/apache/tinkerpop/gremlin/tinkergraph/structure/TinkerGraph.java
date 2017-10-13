@@ -18,7 +18,7 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
-import gnu.trove.map.hash.THashMap;
+import com.koloboke.collect.map.hash.HashObjObjMaps;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.computer.GraphComputer;
@@ -80,8 +80,8 @@ public final class TinkerGraph implements Graph {
     private final TinkerGraphFeatures features = new TinkerGraphFeatures();
 
     protected AtomicLong currentId = new AtomicLong(-1L);
-    protected Map<Object, Vertex> vertices = java.util.Collections.synchronizedMap(new THashMap<>());
-    protected Map<Object, Edge> edges = java.util.Collections.synchronizedMap(new THashMap<>());
+    protected Map<Object, Vertex> vertices = java.util.Collections.synchronizedMap(HashObjObjMaps.newMutableMap());
+    protected Map<Object, Edge> edges = java.util.Collections.synchronizedMap(HashObjObjMaps.newMutableMap());
 
     protected TinkerGraphVariables variables = null;
     protected TinkerGraphComputerView graphComputerView = null;
