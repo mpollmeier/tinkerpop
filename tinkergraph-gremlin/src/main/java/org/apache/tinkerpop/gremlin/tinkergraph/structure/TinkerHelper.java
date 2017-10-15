@@ -114,7 +114,7 @@ public final class TinkerHelper {
         graph.graphComputerView = null;
     }
 
-    public static Map<String, List<VertexProperty>> getProperties(final TinkerVertex vertex) {
+    public static Map<String, VertexProperty> getProperties(final TinkerVertex vertex) {
         return null == vertex.properties ? Collections.emptyMap() : vertex.properties;
     }
 

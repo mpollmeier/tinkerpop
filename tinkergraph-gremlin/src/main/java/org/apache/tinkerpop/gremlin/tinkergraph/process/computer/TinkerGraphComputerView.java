@@ -51,7 +51,7 @@ public final class TinkerGraphComputerView {
 
     private final TinkerGraph graph;
     protected final Map<String, VertexComputeKey> computeKeys;
-    private Map<Element, Map<String, List<VertexProperty<?>>>> computeProperties;
+    private Map<Element, Map<String, VertexProperty<?>>> computeProperties;
     private final Set<Object> legalVertices = new HashSet<>();
     private final Map<Object, Set<Object>> legalEdges = new HashMap<>();
     private final GraphFilter graphFilter;
@@ -94,21 +94,17 @@ public final class TinkerGraphComputerView {
         }
     }
 
-    public List<VertexProperty<?>> getProperty(final TinkerVertex vertex, final String key) {
+    public VertexProperty<?> getProperty(final TinkerVertex vertex, final String key) {
         // if the vertex property is already on the vertex, use that.
-        final List<VertexProperty<?>> vertexProperty = this.getValue(vertex, key);
-        return vertexProperty.isEmpty() ? (List) TinkerHelper.getProperties(vertex).getOrDefault(key, Collections.emptyList()) : vertexProperty;
+        final VertexProperty<?> vertexProperty = this.getValue(vertex, key);
+        return vertexProperty;
         //return isComputeKey(key) ? this.getValue(vertex, key) : (List) TinkerHelper.getProperties(vertex).getOrDefault(key, Collections.emptyList());
     }
 
     public List<Property> getProperties(final TinkerVertex vertex) {
         final List<Property> list = new ArrayList<>();
-        for (final List<VertexProperty> properties : TinkerHelper.getProperties(vertex).values()) {
-            list.addAll(properties);
-        }
-        for (final List<VertexProperty<?>> properties : this.computeProperties.getOrDefault(vertex, Collections.emptyMap()).values()) {
-            list.addAll(properties);
-        }
+        list.addAll(TinkerHelper.getProperties(vertex).values());
+        list.addAll(this.computeProperties.getOrDefault(vertex, Collections.emptyMap()).values());
         return list;
     }
 
@@ -132,7 +128,7 @@ public final class TinkerGraphComputerView {
         // remove all transient properties from the vertices
         for (final VertexComputeKey computeKey : this.computeKeys.values()) {
             if (computeKey.isTransient()) {
-                for (final Map<String, List<VertexProperty<?>>> properties : this.computeProperties.values()) {
+                for (final Map<String, VertexProperty<?>> properties : this.computeProperties.values()) {
                     properties.remove(computeKey.getKey());
                 }
             }
@@ -194,12 +190,10 @@ public final class TinkerGraphComputerView {
     private void addPropertiesToOriginalGraph() {
         TinkerHelper.dropGraphComputerView(this.graph);
         this.computeProperties.forEach((element, properties) -> {
-            properties.forEach((key, vertexProperties) -> {
-                vertexProperties.forEach(vertexProperty -> {
-                    final VertexProperty<?> newVertexProperty = ((Vertex) element).property(VertexProperty.Cardinality.list, vertexProperty.key(), vertexProperty.value(), T.id, vertexProperty.id());
-                    vertexProperty.properties().forEachRemaining(property -> {
-                        newVertexProperty.property(property.key(), property.value());
-                    });
+            properties.forEach((key, vertexProperty) -> {
+                final VertexProperty<?> newVertexProperty = ((Vertex) element).property(VertexProperty.Cardinality.list, vertexProperty.key(), vertexProperty.value(), T.id, vertexProperty.id());
+                vertexProperty.properties().forEachRemaining(property -> {
+                    newVertexProperty.property(property.key(), property.value());
                 });
             });
         });
@@ -213,19 +207,20 @@ public final class TinkerGraphComputerView {
     }
 
     private void addValue(final Vertex vertex, final String key, final VertexProperty property) {
-        final Map<String, List<VertexProperty<?>>> elementProperties = this.computeProperties.computeIfAbsent(vertex, k -> new HashMap<>());
+        final Map<String, VertexProperty<?>> elementProperties = this.computeProperties.computeIfAbsent(vertex, k -> new HashMap<>());
         elementProperties.compute(key, (k, v) -> {
-            if (null == v) v = new ArrayList<>();
-            v.add(property);
-            return v;
+//            if (null == v) v = new ArrayList<>();
+//            v.add(property);
+//            return v;
+            return property;
         });
     }
 
     private void removeValue(final Vertex vertex, final String key, final VertexProperty property) {
-        this.computeProperties.<List<Map<String, VertexProperty<?>>>>getOrDefault(vertex, Collections.emptyMap()).get(key).remove(property);
+        this.computeProperties.<List<Map<String, VertexProperty<?>>>>getOrDefault(vertex, Collections.emptyMap()).remove(key);
     }
 
-    private List<VertexProperty<?>> getValue(final Vertex vertex, final String key) {
-        return this.computeProperties.getOrDefault(vertex, Collections.emptyMap()).getOrDefault(key, Collections.emptyList());
+    private VertexProperty<?> getValue(final Vertex vertex, final String key) {
+        return this.computeProperties.getOrDefault(vertex, Collections.emptyMap()).getOrDefault(key, VertexProperty.empty());
     }
 }

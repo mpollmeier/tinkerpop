@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public final class TinkerVertex extends TinkerElement implements Vertex {
 
-    protected Map<String, List<VertexProperty>> properties;
+    protected Map<String, VertexProperty> properties;
     protected Map<String, Set<Edge>> outEdges;
     protected Map<String, Set<Edge>> inEdges;
     private final TinkerGraph graph;
@@ -64,11 +64,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
                 throw Vertex.Exceptions.multiplePropertiesExistForProvidedKey(key);
         } else {
             if (this.properties != null && this.properties.containsKey(key)) {
-                final List<VertexProperty> list = (List) this.properties.get(key);
-                if (list.size() > 1)
-                    throw Vertex.Exceptions.multiplePropertiesExistForProvidedKey(key);
-                else
-                    return list.get(0);
+                return this.properties.get(key);
             } else
                 return VertexProperty.<V>empty();
         }
@@ -95,9 +91,7 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
             final VertexProperty<V> vertexProperty = new TinkerVertexProperty<V>(idValue, this, key, value);
 
             if (null == this.properties) this.properties = HashObjObjMaps.newMutableMap();
-            final List<VertexProperty> list = this.properties.getOrDefault(key, new ArrayList<>());
-            list.add(vertexProperty);
-            this.properties.put(key, list);
+            this.properties.put(key, vertexProperty);
             TinkerHelper.autoUpdateIndex(this, key, value, null);
             ElementHelper.attachProperties(vertexProperty, keyValues);
             return vertexProperty;
@@ -162,16 +156,13 @@ public final class TinkerVertex extends TinkerElement implements Vertex {
         else {
             if (null == this.properties) return Collections.emptyIterator();
             if (propertyKeys.length == 1) {
-                final List<VertexProperty> properties = this.properties.getOrDefault(propertyKeys[0], Collections.emptyList());
-                if (properties.size() == 1) {
-                    return IteratorUtils.of(properties.get(0));
-                } else if (properties.isEmpty()) {
-                    return Collections.emptyIterator();
+                if(this.properties.containsKey(propertyKeys[0])) {
+                    return IteratorUtils.of(this.properties.get(propertyKeys[0]));
                 } else {
-                    return (Iterator) new ArrayList<>(properties).iterator();
+                    return Collections.emptyIterator();
                 }
             } else
-                return (Iterator) this.properties.entrySet().stream().filter(entry -> ElementHelper.keyExists(entry.getKey(), propertyKeys)).flatMap(entry -> entry.getValue().stream()).collect(Collectors.toList()).iterator();
+                return (Iterator) this.properties.entrySet().stream().filter(entry -> ElementHelper.keyExists(entry.getKey(), propertyKeys)).collect(Collectors.toList()).iterator();
         }
     }
 }

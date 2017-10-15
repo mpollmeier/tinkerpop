@@ -130,11 +130,8 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
     @Override
     public void remove() {
         if (null != this.vertex.properties && this.vertex.properties.containsKey(this.key)) {
-            this.vertex.properties.get(this.key).remove(this);
-            if (this.vertex.properties.get(this.key).size() == 0) {
-                this.vertex.properties.remove(this.key);
-                TinkerHelper.removeIndex(this.vertex, this.key, this.value);
-            }
+            this.vertex.properties.remove(this.key);
+            TinkerHelper.removeIndex(this.vertex, this.key, this.value);
             final AtomicBoolean delete = new AtomicBoolean(true);
             this.vertex.properties(this.key).forEachRemaining(property -> {
                 if (property.value().equals(this.value))
