@@ -19,7 +19,6 @@
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
 import com.koloboke.collect.map.hash.HashObjObjMaps;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -31,6 +30,7 @@ import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  */
 public class TinkerVertexProperty<V> extends TinkerElement implements VertexProperty<V> {
 
+    protected Map<String, Property> properties;
     private final TinkerVertex vertex;
     private final String key;
     private final V value;
@@ -104,17 +105,21 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
 
     @Override
     public Set<String> keys() {
-        return Collections.emptySet();
+        return null == this.properties ? Collections.emptySet() : this.properties.keySet();
     }
 
     @Override
     public <U> Property<U> property(final String key) {
-        return Property.empty();
+        return null == this.properties ? Property.<U>empty() : this.properties.getOrDefault(key, Property.<U>empty());
     }
 
     @Override
     public <U> Property<U> property(final String key, final U value) {
-        throw new NotImplementedException("made TinkerVertexProperty non-recursive...");
+        if (this.removed) throw elementAlreadyRemoved(VertexProperty.class, id);
+        final Property<U> property = new TinkerProperty<>(this, key, value);
+        if (this.properties == null) this.properties = HashObjObjMaps.newMutableMap();
+        this.properties.put(key, property);
+        return property;
     }
 
     @Override
@@ -133,12 +138,18 @@ public class TinkerVertexProperty<V> extends TinkerElement implements VertexProp
                     delete.set(false);
             });
             if (delete.get()) TinkerHelper.removeIndex(this.vertex, this.key, this.value);
+            this.properties = null;
             this.removed = true;
         }
     }
 
     @Override
     public <U> Iterator<Property<U>> properties(final String... propertyKeys) {
-        return Collections.emptyIterator();
+        if (null == this.properties) return Collections.emptyIterator();
+        if (propertyKeys.length == 1) {
+            final Property<U> property = this.properties.get(propertyKeys[0]);
+            return null == property ? Collections.emptyIterator() : IteratorUtils.of(property);
+        } else
+            return (Iterator) this.properties.entrySet().stream().filter(entry -> ElementHelper.keyExists(entry.getKey(), propertyKeys)).map(entry -> entry.getValue()).collect(Collectors.toList()).iterator();
     }
 }
