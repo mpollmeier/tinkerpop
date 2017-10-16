@@ -21,13 +21,17 @@ package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 import java.util.*;
 
 public class DomainVertexClass1 extends SpecialisedTinkerVertex {
+    public static String STRING_A = "stringA";
+    public static String STRING_B = "stringB";
+    public static String INTEGER_A = "integerA";
+    public static String INTEGER_B = "integerB";
+    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(STRING_A, STRING_B, INTEGER_A, INTEGER_B));
+    public static String label = DomainVertexClass1.class.getSimpleName();
+    
     private final String stringA;
     private final String stringB;
     private final Integer integerA;
     private final Integer integerB;
-
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList("stringA", "stringB", "integerA", "integerB"));
-    public static String label = DomainVertexClass1.class.getSimpleName();
 
     public DomainVertexClass1(Object id, TinkerGraph graph, String stringA, String stringB, Integer integerA, Integer integerB) {
         super(id, DomainVertexClass1.label, graph, specificKeys);
@@ -40,13 +44,14 @@ public class DomainVertexClass1 extends SpecialisedTinkerVertex {
 
     @Override
     protected <V> V specificProperty(String key) {
-        if (key == "stringA") {
+        // note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings
+        if (key == STRING_A) {
             return (V) stringA;
-        } else if (key == "stringB") {
+        } else if (key == STRING_B) {
             return (V) stringB;
-        } else if (key == "integerA") {
+        } else if (key == INTEGER_A) {
             return (V) integerA;
-        } else if (key == "integerB") {
+        } else if (key == INTEGER_B) {
             return (V) integerB;
         } else {
             throw new NoSuchElementException(key);
