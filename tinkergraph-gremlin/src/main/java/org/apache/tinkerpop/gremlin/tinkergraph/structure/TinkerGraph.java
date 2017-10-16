@@ -169,11 +169,23 @@ public final class TinkerGraph implements Graph {
             idValue = vertexIdManager.getNextId(this);
         }
 
-        final Vertex vertex = new TinkerVertex(idValue, label, this);
-        this.vertices.put(vertex.id(), vertex);
-
-        ElementHelper.attachProperties(vertex, VertexProperty.Cardinality.list, keyValues);
-        return vertex;
+        if (DomainVertexClass1.label.equals(label)) {
+            Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
+//            System.out.println("special handling for DomainVertexClass1 with " + keyValueMap);
+            String stringA = (String) keyValueMap.get("stringA");
+            String stringB = (String) keyValueMap.get("stringB");
+            Integer integerA = (Integer) keyValueMap.get("integerA");
+            Integer integerB = (Integer) keyValueMap.get("integerB");
+            final Vertex vertex = new DomainVertexClass1(idValue,this, stringA, stringB, integerA, integerB);
+            this.vertices.put(vertex.id(), vertex);
+            return vertex;
+        } else {
+//            System.out.println("falling back to default vertex");
+            final Vertex vertex = new TinkerVertex(idValue, label, this);
+            this.vertices.put(vertex.id(), vertex);
+            ElementHelper.attachProperties(vertex, VertexProperty.Cardinality.list, keyValues);
+            return vertex;
+        }
     }
 
     @Override
