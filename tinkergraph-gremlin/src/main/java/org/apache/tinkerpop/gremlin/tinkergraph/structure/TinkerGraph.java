@@ -169,14 +169,14 @@ public final class TinkerGraph implements Graph {
             idValue = vertexIdManager.getNextId(this);
         }
 
-        if (DomainVertexClass1.label.equals(label)) {
+        if (DomainVertex1.label.equals(label)) {
             Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
-//            System.out.println("special handling for DomainVertexClass1 with " + keyValueMap);
+//            System.out.println("special handling for DomainVertex1 with " + keyValueMap);
             String stringA = (String) keyValueMap.get("stringA");
             String stringB = (String) keyValueMap.get("stringB");
             Integer integerA = (Integer) keyValueMap.get("integerA");
             Integer integerB = (Integer) keyValueMap.get("integerB");
-            final Vertex vertex = new DomainVertexClass1(idValue,this, stringA, stringB, integerA, integerB);
+            final Vertex vertex = new DomainVertex1(idValue,this, stringA, stringB, integerA, integerB);
             this.vertices.put(vertex.id(), vertex);
             return vertex;
         } else {

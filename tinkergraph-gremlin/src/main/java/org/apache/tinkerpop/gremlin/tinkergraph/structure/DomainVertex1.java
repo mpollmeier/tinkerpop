@@ -20,21 +20,22 @@ package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
 import java.util.*;
 
-public class DomainVertexClass1 extends SpecialisedTinkerVertex {
+public class DomainVertex1 extends SpecialisedTinkerVertex {
+    public static String label = DomainVertex1.class.getSimpleName();
+
     public static String STRING_A = "stringA";
     public static String STRING_B = "stringB";
     public static String INTEGER_A = "integerA";
     public static String INTEGER_B = "integerB";
     public static Set<String> specificKeys = new HashSet<>(Arrays.asList(STRING_A, STRING_B, INTEGER_A, INTEGER_B));
-    public static String label = DomainVertexClass1.class.getSimpleName();
-    
+
     private final String stringA;
     private final String stringB;
     private final Integer integerA;
     private final Integer integerB;
 
-    public DomainVertexClass1(Object id, TinkerGraph graph, String stringA, String stringB, Integer integerA, Integer integerB) {
-        super(id, DomainVertexClass1.label, graph, specificKeys);
+    public DomainVertex1(Object id, TinkerGraph graph, String stringA, String stringB, Integer integerA, Integer integerB) {
+        super(id, DomainVertex1.label, graph, specificKeys);
 
         this.stringA = stringA;
         this.stringB = stringB;

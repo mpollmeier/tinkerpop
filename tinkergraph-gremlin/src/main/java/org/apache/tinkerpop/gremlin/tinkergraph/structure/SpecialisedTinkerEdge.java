@@ -19,16 +19,20 @@
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-public abstract class SpecialisedTinkerVertex extends TinkerVertex {
+public abstract class SpecialisedTinkerEdge extends TinkerEdge {
 
     private final Set<String> specificKeys;
 
-    protected SpecialisedTinkerVertex(Object id, String label, TinkerGraph graph, Set<String> specificKeys) {
-        super(id, label, graph);
+    protected SpecialisedTinkerEdge(Object id, Vertex outVertex, String label, Vertex inVertex, Set<String> specificKeys) {
+        super(id, outVertex, label, inVertex);
         this.specificKeys = specificKeys;
     }
 
@@ -38,15 +42,15 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
     }
 
     @Override
-    public <V> VertexProperty<V> property(String key) {
-        // TODO cache instantiated TinkerVertexProperties
-        return new TinkerVertexProperty<V>(this, key, specificProperty(key));
+    public <V> Property<V> property(String key) {
+        // TODO cache instantiated Properties
+        return new TinkerProperty<V>(this, key, specificProperty(key));
     }
 
     protected abstract <V> V specificProperty(String key);
 
     @Override
-    public <V> Iterator<VertexProperty<V>> properties(String... propertyKeys) {
+    public <V> Iterator<Property<V>> properties(String... propertyKeys) {
         if (propertyKeys.length == 0) {
             return (Iterator) specificKeys.stream().map(key -> property(key)).iterator();
         } else {
@@ -57,7 +61,7 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
     }
 
     @Override
-    public <V> VertexProperty<V> property(VertexProperty.Cardinality cardinality, String key, V value, Object... keyValues) {
+    public <V> Property<V> property(String key, V value) {
         throw new NotImplementedException("doesn't (yet) support mutation");
     }
 
