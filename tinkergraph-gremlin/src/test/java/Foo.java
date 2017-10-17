@@ -56,6 +56,8 @@ public class Foo {
         System.out.println(g.V(from.id()).outE(DomainEdge1.label).toList());
         System.out.println(g.V(from.id()).outE(DomainEdge1.label).inV().toList());
         System.out.println(g.V(from.id()).out(DomainEdge1.label).toList());
-//        System.out.println(g.V(from.id()).outE(DomainEdge1.label).toList());
+
+        System.out.println(g.V(from.id()).bothE(DomainEdge1.label).toList());
+        System.out.println(g.V(from.id()).both(DomainEdge1.label).toList());
     }
 }

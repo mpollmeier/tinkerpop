@@ -21,6 +21,7 @@ package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
+import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.*;
 
@@ -65,15 +66,20 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
 
     @Override
     public Edge addEdge(String label, Vertex vertex, Object... keyValues) {
-        if (null == vertex) throw Graph.Exceptions.argumentCanNotBeNull("inVertex");
-        if (this.removed) throw elementAlreadyRemoved(Vertex.class, this.id);
+        if (null == vertex) {
+            throw Graph.Exceptions.argumentCanNotBeNull("inVertex");
+        }
+        if (this.removed) {
+            throw elementAlreadyRemoved(Vertex.class, this.id);
+        }
 
         // TODO: replace with some register of factories for specialised edges
         if (DomainEdge1.label.equals(label)) {
             Object idValue = graph.edgeIdManager.convert(ElementHelper.getIdValue(keyValues).orElse(null));
             if (null != idValue) {
-                if (graph.edges.containsKey(idValue))
+                if (graph.edges.containsKey(idValue)) {
                     throw Graph.Exceptions.edgeWithIdAlreadyExists(idValue);
+                }
             } else {
                 idValue = graph.edgeIdManager.getNextId(graph);
             }
@@ -92,7 +98,7 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
 
             // TODO: allow to connect non-specialised vertices with specialised edges and vice versa
             this.addSpecialisedOutEdge(edge);
-            ((SpecialisedTinkerVertex)inVertex).addSpecialisedInEdge(edge);
+            ((SpecialisedTinkerVertex) inVertex).addSpecialisedInEdge(edge);
             return edge;
         } else {
             return super.addEdge(label, vertex, keyValues);
@@ -100,6 +106,7 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
     }
 
     protected abstract void addSpecialisedOutEdge(Edge edge);
+
     protected abstract void addSpecialisedInEdge(Edge edge);
 
     @Override
@@ -112,10 +119,16 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
 
     @Override
     public Iterator<Vertex> vertices(final Direction direction, final String... edgeLabels) {
-        return specificVertices(direction, edgeLabels);
+        Iterator<Edge> edges = specificEdges(direction, edgeLabels);
+        if (direction == Direction.IN) {
+            return IteratorUtils.map(edges, Edge::outVertex);
+        } else if (direction == Direction.OUT) {
+            return IteratorUtils.map(edges, Edge::inVertex);
+        } else if (direction == Direction.BOTH) {
+            return IteratorUtils.flatMap(edges, Edge::bothVertices);
+        } else {
+            return Collections.emptyIterator();
+        }
     }
-
-    /* implement in concrete specialised instance to avoid using generic HashMaps */
-    protected abstract Iterator<Vertex> specificVertices(Direction direction, String... edgeLabels);
 
 }

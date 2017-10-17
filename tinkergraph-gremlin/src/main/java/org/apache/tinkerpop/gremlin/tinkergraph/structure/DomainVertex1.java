@@ -89,20 +89,6 @@ public class DomainVertex1 extends SpecialisedTinkerVertex {
     }
 
     @Override
-    protected Iterator<Vertex> specificVertices(Direction direction, String... edgeLabels) {
-        Iterator<Edge> edges = specificEdges(direction, edgeLabels);
-        if (direction == Direction.IN) {
-            return IteratorUtils.map(edges, Edge::outVertex);
-        } else if (direction == Direction.OUT) {
-            return IteratorUtils.map(edges, Edge::inVertex);
-        } else if (direction == Direction.BOTH) {
-            return IteratorUtils.flatMap(edges, Edge::bothVertices);
-        } else {
-            return Collections.emptyIterator();
-        }
-    }
-
-    @Override
     protected void addSpecialisedOutEdge(Edge edge) {
         if (edge instanceof DomainEdge1) {
             getDomainEdges1Out().add((DomainEdge1) edge);
