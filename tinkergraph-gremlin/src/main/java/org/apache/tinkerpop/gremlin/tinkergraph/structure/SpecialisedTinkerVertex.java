@@ -19,7 +19,11 @@
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 
 import java.util.*;
 
@@ -61,4 +65,38 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
         throw new NotImplementedException("doesn't (yet) support mutation");
     }
 
+    @Override
+    public Edge addEdge(String label, Vertex vertex, Object... keyValues) {
+        if (null == vertex) throw Graph.Exceptions.argumentCanNotBeNull("inVertex");
+        if (this.removed) throw elementAlreadyRemoved(Vertex.class, this.id);
+
+        // TODO: replace with some register of factories for specialised edges
+        if (DomainEdge1.label.equals(label)) {
+            Object idValue = graph.edgeIdManager.convert(ElementHelper.getIdValue(keyValues).orElse(null));
+            if (null != idValue) {
+                if (graph.edges.containsKey(idValue))
+                    throw Graph.Exceptions.edgeWithIdAlreadyExists(idValue);
+            } else {
+                idValue = graph.edgeIdManager.getNextId(graph);
+            }
+
+            final TinkerVertex inVertex = (TinkerVertex) vertex;
+            final TinkerVertex outVertex = this;
+
+            ElementHelper.legalPropertyKeyValueArray(keyValues);
+            Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
+            System.out.println("special handling for DomainEdge1 with " + keyValueMap);
+            String stringZ = (String) keyValueMap.get("stringZ");
+            Integer integerZ = (Integer) keyValueMap.get("integerZ");
+
+            final Edge edge = new DomainEdge1(idValue, outVertex, label, inVertex, stringZ, integerZ);
+            graph.edges.put(edge.id(), edge);
+            // TODO: replace with specific version as well: no more hashMaps for outEdges/inEdges
+            TinkerHelper.addOutEdge(outVertex, label, edge);
+            TinkerHelper.addInEdge(inVertex, label, edge);
+            return edge;
+        } else {
+            return super.addEdge(label, vertex, keyValues);
+        }
+    }
 }

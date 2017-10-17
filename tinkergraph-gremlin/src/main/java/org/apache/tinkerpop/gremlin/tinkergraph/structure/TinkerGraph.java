@@ -169,6 +169,7 @@ public final class TinkerGraph implements Graph {
             idValue = vertexIdManager.getNextId(this);
         }
 
+        // TODO: replace with some register of factories for specialised vertices
         if (DomainVertex1.label.equals(label)) {
             Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
 //            System.out.println("special handling for DomainVertex1 with " + keyValueMap);
