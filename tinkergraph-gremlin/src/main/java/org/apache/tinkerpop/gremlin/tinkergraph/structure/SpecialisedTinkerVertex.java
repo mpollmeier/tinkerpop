@@ -19,10 +19,7 @@
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 
 import java.util.*;
@@ -47,6 +44,7 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
         return new TinkerVertexProperty<V>(this, key, specificProperty(key));
     }
 
+    /* implement in concrete specialised instance to avoid using generic HashMaps */
     protected abstract <V> V specificProperty(String key);
 
     @Override
@@ -85,18 +83,39 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
 
             ElementHelper.legalPropertyKeyValueArray(keyValues);
             Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
-            System.out.println("special handling for DomainEdge1 with " + keyValueMap);
+//            System.out.println("special handling for DomainEdge1 with " + keyValueMap);
             String stringZ = (String) keyValueMap.get("stringZ");
             Integer integerZ = (Integer) keyValueMap.get("integerZ");
 
             final Edge edge = new DomainEdge1(idValue, outVertex, label, inVertex, stringZ, integerZ);
             graph.edges.put(edge.id(), edge);
-            // TODO: replace with specific version as well: no more hashMaps for outEdges/inEdges
-            TinkerHelper.addOutEdge(outVertex, label, edge);
-            TinkerHelper.addInEdge(inVertex, label, edge);
+
+            // TODO: allow to connect non-specialised vertices with specialised edges and vice versa
+            this.addSpecialisedOutEdge(edge);
+            ((SpecialisedTinkerVertex)inVertex).addSpecialisedInEdge(edge);
             return edge;
         } else {
             return super.addEdge(label, vertex, keyValues);
         }
     }
+
+    protected abstract void addSpecialisedOutEdge(Edge edge);
+    protected abstract void addSpecialisedInEdge(Edge edge);
+
+    @Override
+    public Iterator<Edge> edges(final Direction direction, final String... edgeLabels) {
+        return specificEdges(direction, edgeLabels);
+    }
+
+    /* implement in concrete specialised instance to avoid using generic HashMaps */
+    protected abstract Iterator<Edge> specificEdges(final Direction direction, final String... edgeLabels);
+
+    @Override
+    public Iterator<Vertex> vertices(final Direction direction, final String... edgeLabels) {
+        return specificVertices(direction, edgeLabels);
+    }
+
+    /* implement in concrete specialised instance to avoid using generic HashMaps */
+    protected abstract Iterator<Vertex> specificVertices(Direction direction, String... edgeLabels);
+
 }

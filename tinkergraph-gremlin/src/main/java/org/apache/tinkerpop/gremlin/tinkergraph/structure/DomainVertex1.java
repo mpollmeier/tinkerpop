@@ -18,6 +18,11 @@
  */
 package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
+
 import java.util.*;
 
 public class DomainVertex1 extends SpecialisedTinkerVertex {
@@ -29,10 +34,15 @@ public class DomainVertex1 extends SpecialisedTinkerVertex {
     public static String INTEGER_B = "integerB";
     public static Set<String> specificKeys = new HashSet<>(Arrays.asList(STRING_A, STRING_B, INTEGER_A, INTEGER_B));
 
+    // properties
     private final String stringA;
     private final String stringB;
     private final Integer integerA;
     private final Integer integerB;
+
+    // edges
+    private Set<DomainEdge1> domainEdges1Out;
+    private Set<DomainEdge1> domainEdges1In;
 
     public DomainVertex1(Object id, TinkerGraph graph, String stringA, String stringB, Integer integerA, Integer integerB) {
         super(id, DomainVertex1.label, graph, specificKeys);
@@ -43,9 +53,9 @@ public class DomainVertex1 extends SpecialisedTinkerVertex {
         this.integerB = integerB;
     }
 
+    /* note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings */
     @Override
     protected <V> V specificProperty(String key) {
-        // note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings
         if (key == STRING_A) {
             return (V) stringA;
         } else if (key == STRING_B) {
@@ -57,5 +67,70 @@ public class DomainVertex1 extends SpecialisedTinkerVertex {
         } else {
             throw new NoSuchElementException(key);
         }
+    }
+
+    /* note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings */
+    @Override
+    protected Iterator<Edge> specificEdges(Direction direction, String... edgeLabels) {
+        List<Iterator<?>> iterators = new LinkedList<>();
+        for (String label : edgeLabels) {
+            if (label == DomainEdge1.label) {
+                if (direction == Direction.IN || direction == Direction.BOTH) {
+                    iterators.add(getDomainEdges1In().iterator());
+                }
+                if (direction == Direction.OUT || direction == Direction.BOTH) {
+                    iterators.add(getDomainEdges1Out().iterator());
+                }
+            }
+        }
+
+        Iterator<Edge>[] iteratorsArray = iterators.toArray(new Iterator[iterators.size()]);
+        return IteratorUtils.concat(iteratorsArray);
+    }
+
+    @Override
+    protected Iterator<Vertex> specificVertices(Direction direction, String... edgeLabels) {
+        Iterator<Edge> edges = specificEdges(direction, edgeLabels);
+        if (direction == Direction.IN) {
+            return IteratorUtils.map(edges, Edge::outVertex);
+        } else if (direction == Direction.OUT) {
+            return IteratorUtils.map(edges, Edge::inVertex);
+        } else if (direction == Direction.BOTH) {
+            return IteratorUtils.flatMap(edges, Edge::bothVertices);
+        } else {
+            return Collections.emptyIterator();
+        }
+    }
+
+    @Override
+    protected void addSpecialisedOutEdge(Edge edge) {
+        if (edge instanceof DomainEdge1) {
+            getDomainEdges1Out().add((DomainEdge1) edge);
+        } else {
+            throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
+        }
+    }
+
+    @Override
+    protected void addSpecialisedInEdge(Edge edge) {
+        if (edge instanceof DomainEdge1) {
+            getDomainEdges1In().add((DomainEdge1) edge);
+        } else {
+            throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
+        }
+    }
+
+    private Set<DomainEdge1> getDomainEdges1Out() {
+        if (domainEdges1Out == null) {
+            domainEdges1Out = new HashSet<>();
+        }
+        return domainEdges1Out;
+    }
+    
+    private Set<DomainEdge1> getDomainEdges1In() {
+        if (domainEdges1In == null) {
+            domainEdges1In = new HashSet<>();
+        }
+        return domainEdges1In;
     }
 }
