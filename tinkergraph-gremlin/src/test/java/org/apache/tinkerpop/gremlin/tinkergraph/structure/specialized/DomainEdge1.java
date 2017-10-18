@@ -16,16 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tinkerpop.gremlin.tinkergraph.structure;
+package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedTinkerEdge;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-public class DomainEdge1 extends SpecialisedTinkerEdge {
+public class DomainEdge1 extends SpecializedTinkerEdge {
     public static String label = DomainEdge1.class.getSimpleName();
 
     public static String STRING_Z = "stringZ";
@@ -35,7 +36,7 @@ public class DomainEdge1 extends SpecialisedTinkerEdge {
     private final String stringZ;
     private final Integer integerZ;
 
-    public DomainEdge1(Object id, Vertex outVertex, String label, Vertex inVertex, String stringZ, Integer integerZ) {
+    public DomainEdge1(Object id, Vertex outVertex, Vertex inVertex, String stringZ, Integer integerZ) {
         super(id, outVertex, label, inVertex, specificKeys);
         this.stringZ = stringZ;
         this.integerZ = integerZ;

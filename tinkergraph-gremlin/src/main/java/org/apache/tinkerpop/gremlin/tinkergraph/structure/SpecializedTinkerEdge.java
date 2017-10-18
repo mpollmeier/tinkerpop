@@ -21,17 +21,19 @@ package org.apache.tinkerpop.gremlin.tinkergraph.structure;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerEdge;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerProperty;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public abstract class SpecialisedTinkerEdge extends TinkerEdge {
+public abstract class SpecializedTinkerEdge extends TinkerEdge {
 
     private final Set<String> specificKeys;
 
-    protected SpecialisedTinkerEdge(Object id, Vertex outVertex, String label, Vertex inVertex, Set<String> specificKeys) {
+    protected SpecializedTinkerEdge(Object id, Vertex outVertex, String label, Vertex inVertex, Set<String> specificKeys) {
         super(id, outVertex, label, inVertex);
         this.specificKeys = specificKeys;
     }

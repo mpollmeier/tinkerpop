@@ -25,11 +25,11 @@ import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.*;
 
-public abstract class SpecialisedTinkerVertex extends TinkerVertex {
+public abstract class SpecializedTinkerVertex extends TinkerVertex {
 
     private final Set<String> specificKeys;
 
-    protected SpecialisedTinkerVertex(Object id, String label, TinkerGraph graph, Set<String> specificKeys) {
+    protected SpecializedTinkerVertex(Object id, String label, TinkerGraph graph, Set<String> specificKeys) {
         super(id, label, graph);
         this.specificKeys = specificKeys;
     }
@@ -73,8 +73,8 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
             throw elementAlreadyRemoved(Vertex.class, this.id);
         }
 
-        // TODO: replace with some register of factories for specialised edges
-        if (DomainEdge1.label.equals(label)) {
+        if (graph.specializedEdgeFactoryByLabel.containsKey(label)) {
+            SpecializedElementFactory.ForEdge factory = graph.specializedEdgeFactoryByLabel.get(label);
             Object idValue = graph.edgeIdManager.convert(ElementHelper.getIdValue(keyValues).orElse(null));
             if (null != idValue) {
                 if (graph.edges.containsKey(idValue)) {
@@ -84,21 +84,15 @@ public abstract class SpecialisedTinkerVertex extends TinkerVertex {
                 idValue = graph.edgeIdManager.getNextId(graph);
             }
 
-            final TinkerVertex inVertex = (TinkerVertex) vertex;
-            final TinkerVertex outVertex = this;
-
             ElementHelper.legalPropertyKeyValueArray(keyValues);
-            Map<String, Object> keyValueMap = ElementHelper.asMap(keyValues);
-//            System.out.println("special handling for DomainEdge1 with " + keyValueMap);
-            String stringZ = (String) keyValueMap.get("stringZ");
-            Integer integerZ = (Integer) keyValueMap.get("integerZ");
-
-            final Edge edge = new DomainEdge1(idValue, outVertex, label, inVertex, stringZ, integerZ);
-            graph.edges.put(edge.id(), edge);
+            TinkerVertex inVertex = (TinkerVertex) vertex;
+            TinkerVertex outVertex = this;
+            SpecializedTinkerEdge edge = factory.createEdge(idValue, outVertex, inVertex, ElementHelper.asMap(keyValues));
+            graph.edges.put(idValue, edge);
 
             // TODO: allow to connect non-specialised vertices with specialised edges and vice versa
             this.addSpecialisedOutEdge(edge);
-            ((SpecialisedTinkerVertex) inVertex).addSpecialisedInEdge(edge);
+            ((SpecializedTinkerVertex) inVertex).addSpecialisedInEdge(edge);
             return edge;
         } else {
             return super.addEdge(label, vertex, keyValues);

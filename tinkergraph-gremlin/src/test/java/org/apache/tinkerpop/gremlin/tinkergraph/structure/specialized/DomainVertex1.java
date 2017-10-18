@@ -16,16 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tinkerpop.gremlin.tinkergraph.structure;
+package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedTinkerVertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.*;
 
-public class DomainVertex1 extends SpecialisedTinkerVertex {
+public class DomainVertex1 extends SpecializedTinkerVertex {
     public static String label = DomainVertex1.class.getSimpleName();
 
     public static String STRING_A = "stringA";
