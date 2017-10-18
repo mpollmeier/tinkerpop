@@ -16,55 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized;
+package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized.gratefuldead;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedElementFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedTinkerVertex;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 
 import java.util.*;
 
-public class DomainVertex1 extends SpecializedTinkerVertex {
-    public static String label = DomainVertex1.class.getSimpleName();
+public class Artist extends SpecializedTinkerVertex {
+    public static String label = "artist";
 
-    public static String STRING_A = "stringA";
-    public static String STRING_B = "stringB";
-    public static String INTEGER_A = "integerA";
-    public static String INTEGER_B = "integerB";
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(STRING_A, STRING_B, INTEGER_A, INTEGER_B));
+    public static String NAME = "name";
+    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(NAME));
 
     // properties
-    private final String stringA;
-    private final String stringB;
-    private final Integer integerA;
-    private final Integer integerB;
+    private final String name;
 
     // edges
-    private Set<DomainEdge1> domainEdges1Out;
-    private Set<DomainEdge1> domainEdges1In;
+    public static String[] ALL_EDGES = new String[] {WrittenBy.label, SungBy.label};
+    private Set<SungBy> sungByIn;
+    private Set<WrittenBy> writtenByIn;
 
-    public DomainVertex1(Object id, TinkerGraph graph, String stringA, String stringB, Integer integerA, Integer integerB) {
-        super(id, DomainVertex1.label, graph, specificKeys);
+    public Artist(Object id, TinkerGraph graph, String name) {
+        super(id, Artist.label, graph, specificKeys);
 
-        this.stringA = stringA;
-        this.stringB = stringB;
-        this.integerA = integerA;
-        this.integerB = integerB;
+        this.name = name;
     }
 
     /* note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings */
     @Override
     protected <V> V specificProperty(String key) {
-        if (key == STRING_A) {
-            return (V) stringA;
-        } else if (key == STRING_B) {
-            return (V) stringB;
-        } else if (key == INTEGER_A) {
-            return (V) integerA;
-        } else if (key == INTEGER_B) {
-            return (V) integerB;
+        if (key == NAME) {
+            return (V) name;
         } else {
             throw new NoSuchElementException(key);
         }
@@ -74,13 +61,17 @@ public class DomainVertex1 extends SpecializedTinkerVertex {
     @Override
     protected Iterator<Edge> specificEdges(Direction direction, String... edgeLabels) {
         List<Iterator<?>> iterators = new LinkedList<>();
+        if (edgeLabels.length == 0) {
+            edgeLabels = ALL_EDGES;
+        }
         for (String label : edgeLabels) {
-            if (label == DomainEdge1.label) {
+            if (label == WrittenBy.label) {
                 if (direction == Direction.IN || direction == Direction.BOTH) {
-                    iterators.add(getDomainEdges1In().iterator());
+                    iterators.add(getWrittenByIn().iterator());
                 }
-                if (direction == Direction.OUT || direction == Direction.BOTH) {
-                    iterators.add(getDomainEdges1Out().iterator());
+            } else if (label == SungBy.label) {
+                if (direction == Direction.IN || direction == Direction.BOTH) {
+                    iterators.add(getSungByIn().iterator());
                 }
             }
         }
@@ -91,33 +82,44 @@ public class DomainVertex1 extends SpecializedTinkerVertex {
 
     @Override
     protected void addSpecialisedOutEdge(Edge edge) {
-        if (edge instanceof DomainEdge1) {
-            getDomainEdges1Out().add((DomainEdge1) edge);
-        } else {
-            throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
-        }
+        throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
     }
 
     @Override
     protected void addSpecialisedInEdge(Edge edge) {
-        if (edge instanceof DomainEdge1) {
-            getDomainEdges1In().add((DomainEdge1) edge);
+        if (edge instanceof WrittenBy) {
+            getWrittenByIn().add((WrittenBy) edge);
+        } else if (edge instanceof SungBy) {
+            getSungByIn().add((SungBy) edge);
         } else {
             throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
         }
     }
 
-    private Set<DomainEdge1> getDomainEdges1Out() {
-        if (domainEdges1Out == null) {
-            domainEdges1Out = new HashSet<>();
+    private Set<WrittenBy> getWrittenByIn() {
+        if (writtenByIn == null) {
+            writtenByIn = new HashSet<>();
         }
-        return domainEdges1Out;
+        return writtenByIn;
     }
-    
-    private Set<DomainEdge1> getDomainEdges1In() {
-        if (domainEdges1In == null) {
-            domainEdges1In = new HashSet<>();
+
+    private Set<SungBy> getSungByIn() {
+        if (sungByIn == null) {
+            sungByIn = new HashSet<>();
         }
-        return domainEdges1In;
+        return sungByIn;
     }
+
+    public static SpecializedElementFactory.ForVertex<Artist> factory = new SpecializedElementFactory.ForVertex<Artist>() {
+        @Override
+        public String forLabel() {
+            return Artist.label;
+        }
+
+        @Override
+        public Artist createVertex(Object id, TinkerGraph graph, Map<String, Object> keyValueMap) {
+            String name = (String) keyValueMap.get("name");
+            return new Artist(id, graph, name);
+        }
+    };
 }

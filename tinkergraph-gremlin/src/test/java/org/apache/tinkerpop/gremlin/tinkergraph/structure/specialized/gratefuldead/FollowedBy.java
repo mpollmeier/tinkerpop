@@ -16,41 +16,47 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized;
+package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized.gratefuldead;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedElementFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedTinkerEdge;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
-public class DomainEdge1 extends SpecializedTinkerEdge {
-    public static String label = DomainEdge1.class.getSimpleName();
+public class FollowedBy extends SpecializedTinkerEdge {
+    public static String label = "followedBy";
 
-    public static String STRING_Z = "stringZ";
-    public static String INTEGER_Z = "integerZ";
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(STRING_Z,INTEGER_Z));
+    public static String WEIGHT = "weight";
+    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(WEIGHT));
 
-    private final String stringZ;
-    private final Integer integerZ;
+    private final Integer weight;
 
-    public DomainEdge1(Object id, Vertex outVertex, Vertex inVertex, String stringZ, Integer integerZ) {
+    public FollowedBy(Object id, Vertex outVertex, Vertex inVertex, Integer weight) {
         super(id, outVertex, label, inVertex, specificKeys);
-        this.stringZ = stringZ;
-        this.integerZ = integerZ;
+        this.weight = weight;
     }
 
     @Override
     protected <V> V specificProperty(String key) {
         // note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings
-        if (key == STRING_Z) {
-            return (V) stringZ;
-        } else if (key == INTEGER_Z) {
-            return (V) integerZ;
+        if (key == WEIGHT) {
+            return (V) weight;
         } else {
             throw new NoSuchElementException(key);
         }
     }
+
+    public static SpecializedElementFactory.ForEdge<FollowedBy> factory = new SpecializedElementFactory.ForEdge<FollowedBy>() {
+        @Override
+        public String forLabel() {
+            return FollowedBy.label;
+        }
+
+        @Override
+        public FollowedBy createEdge(Object id, Vertex outVertex, Vertex inVertex, Map<String, Object> keyValueMap) {
+            Integer weight = (Integer) keyValueMap.get("weight");
+            return new FollowedBy(id, outVertex, inVertex, weight);
+        }
+    };
 }
