@@ -17,7 +17,9 @@ package org.apache.tinkerpop.gremlin.tinkergraph.structure.specialized.gratefuld
  * under the License.
  */
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
@@ -37,24 +39,9 @@ public class Foo {
         graph.registerSpecializedEdgeFactory(SungBy.factory);
         graph.registerSpecializedEdgeFactory(WrittenBy.factory);
 
-//        Vertex from = graph.addVertex(
-//            T.label, Song.label,
-//            "name", "fromName",
-//            "songType", "fromSongType",
-//            "performances", 1
-//        );
-//
-//        Vertex to = graph.addVertex(
-//            T.label, Song.label,
-//            "name", "toName",
-//            "songType", "toSongType",
-//            "performances", 2
-//        );
-//
-//        from.addEdge(
-//            FollowedBy.label,
-//            to,
-//            "weight", 99l);
+//        graph.createIndex("weight", Edge.class);
+
+
 
         graph.io(IoCore.graphml()).readGraph("data/grateful-dead.xml");
 //        System.out.println(graph.specializedVertexCount());
@@ -62,9 +49,17 @@ public class Foo {
 
         GraphTraversalSource g = graph.traversal();
 
-        int loops = 100;
+        int loops = 10000;
 //        System.out.println(TimeUtil.clockWithResult(loops, () -> g.V().out().out().out().toStream().count()));
-        System.out.println(TimeUtil.clockWithResult(loops, () -> g.V().out().out().out().valueMap(true).toStream().count()));
+//        System.out.println(TimeUtil.clockWithResult(loops, () -> g.V().out().out().out().valueMap(true).toStream().count()));
+
+        System.out.println(TimeUtil.clockWithResult(loops, () -> g.E().has("weight", P.eq(1)).toStream().count()));
+        // no index, generic: 1.33
+        // with index, generic: 0.64
+        // no index, specific: 0.114
+        // with index, specific: 0.055
+
+
 
 //        g.V().outE().count().toList().forEach(v -> System.out.println(v));
 
