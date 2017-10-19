@@ -91,17 +91,17 @@ public abstract class SpecializedTinkerVertex extends TinkerVertex {
             graph.edges.put(idValue, edge);
 
             // TODO: allow to connect non-specialised vertices with specialised edges and vice versa
-            this.addSpecialisedOutEdge(edge);
-            ((SpecializedTinkerVertex) inVertex).addSpecialisedInEdge(edge);
+            this.addSpecializedOutEdge(edge);
+            ((SpecializedTinkerVertex) inVertex).addSpecializedInEdge(edge);
             return edge;
         } else {
             return super.addEdge(label, vertex, keyValues);
         }
     }
 
-    protected abstract void addSpecialisedOutEdge(Edge edge);
+    protected abstract void addSpecializedOutEdge(Edge edge);
 
-    protected abstract void addSpecialisedInEdge(Edge edge);
+    protected abstract void addSpecializedInEdge(Edge edge);
 
     @Override
     public Iterator<Edge> edges(final Direction direction, final String... edgeLabels) {

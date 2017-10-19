@@ -81,12 +81,12 @@ public class Artist extends SpecializedTinkerVertex {
     }
 
     @Override
-    protected void addSpecialisedOutEdge(Edge edge) {
+    protected void addSpecializedOutEdge(Edge edge) {
         throw new IllegalArgumentException("edge type " + edge.getClass() + " not supported");
     }
 
     @Override
-    protected void addSpecialisedInEdge(Edge edge) {
+    protected void addSpecializedInEdge(Edge edge) {
         if (edge instanceof WrittenBy) {
             getWrittenByIn().add((WrittenBy) edge);
         } else if (edge instanceof SungBy) {

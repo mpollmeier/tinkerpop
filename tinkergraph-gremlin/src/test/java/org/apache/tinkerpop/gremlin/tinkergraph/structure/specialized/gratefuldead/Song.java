@@ -100,7 +100,7 @@ public class Song extends SpecializedTinkerVertex {
     }
 
     @Override
-    protected void addSpecialisedOutEdge(Edge edge) {
+    protected void addSpecializedOutEdge(Edge edge) {
         if (edge instanceof FollowedBy) {
             getFollowedByOut().add((FollowedBy) edge);
         } else if (edge instanceof WrittenBy) {
@@ -113,7 +113,7 @@ public class Song extends SpecializedTinkerVertex {
     }
 
     @Override
-    protected void addSpecialisedInEdge(Edge edge) {
+    protected void addSpecializedInEdge(Edge edge) {
         if (edge instanceof FollowedBy) {
             getFollowedByIn().add((FollowedBy) edge);
         } else {
