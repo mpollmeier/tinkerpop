@@ -41,7 +41,8 @@ public class Song extends SpecializedTinkerVertex {
     private final Integer performances;
 
     // edges
-    public static String[] ALL_EDGES = new String[] {FollowedBy.label, WrittenBy.label, SungBy.label};
+    private Set<Edge> outEdges = new HashSet<>();
+    private Set<Edge> inEdges = new HashSet<>();
     private Set<FollowedBy> followedByOut;
     private Set<FollowedBy> followedByIn;
     private Set<WrittenBy> writtenByOut;
@@ -72,10 +73,17 @@ public class Song extends SpecializedTinkerVertex {
     /* note: usage of `==` (pointer comparison) over `.equals` (String content comparison) is intentional for performance - use the statically defined strings */
     @Override
     protected Iterator<Edge> specificEdges(Direction direction, String... edgeLabels) {
-        List<Iterator<?>> iterators = new LinkedList<>();
         if (edgeLabels.length == 0) {
-            edgeLabels = ALL_EDGES;
+            if (direction == Direction.OUT) {
+                return outEdges.iterator();
+            } else if (direction == Direction.IN) {
+                return inEdges.iterator();
+            } else if (direction == Direction.BOTH) {
+                return IteratorUtils.concat(new Iterator[]{outEdges.iterator(), inEdges.iterator()});
+            }
         }
+
+        List<Iterator<?>> iterators = new LinkedList<>();
         for (String label : edgeLabels) {
             if (label == FollowedBy.label) {
                 if (direction == Direction.IN || direction == Direction.BOTH) {
@@ -101,6 +109,8 @@ public class Song extends SpecializedTinkerVertex {
 
     @Override
     protected void addSpecialisedOutEdge(Edge edge) {
+        outEdges.add(edge);
+
         if (edge instanceof FollowedBy) {
             getFollowedByOut().add((FollowedBy) edge);
         } else if (edge instanceof WrittenBy) {
@@ -114,6 +124,8 @@ public class Song extends SpecializedTinkerVertex {
 
     @Override
     protected void addSpecialisedInEdge(Edge edge) {
+        inEdges.add(edge);
+
         if (edge instanceof FollowedBy) {
             getFollowedByIn().add((FollowedBy) edge);
         } else {
