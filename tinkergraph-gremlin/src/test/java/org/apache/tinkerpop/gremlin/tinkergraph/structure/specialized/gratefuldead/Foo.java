@@ -23,6 +23,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.SpecializedElementFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
+import org.apache.tinkerpop.gremlin.util.TimeUtil;
 
 import java.io.IOException;
 
@@ -56,12 +57,16 @@ public class Foo {
 //            "weight", 99l);
 
         graph.io(IoCore.graphml()).readGraph("data/grateful-dead.xml");
-
-        System.out.println(graph.specializedVertexCount());
-        System.out.println(graph.specializedEdgeCount());
+//        System.out.println(graph.specializedVertexCount());
+//        System.out.println(graph.specializedEdgeCount());
 
         GraphTraversalSource g = graph.traversal();
-        g.V().outE().count().toList().forEach(v -> System.out.println(v));
+
+        int loops = 100;
+//        System.out.println(TimeUtil.clockWithResult(loops, () -> g.V().out().out().out().toStream().count()));
+        System.out.println(TimeUtil.clockWithResult(loops, () -> g.V().out().out().out().valueMap(true).toStream().count()));
+
+//        g.V().outE().count().toList().forEach(v -> System.out.println(v));
 
 //        g.V().valueMap().toList().forEach(v -> System.out.println(v));
 //        g.E().valueMap().toList().forEach(v -> System.out.println(v));
