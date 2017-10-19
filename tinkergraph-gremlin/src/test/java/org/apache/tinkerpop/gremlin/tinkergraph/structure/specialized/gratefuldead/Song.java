@@ -33,7 +33,7 @@ public class Song extends SpecializedTinkerVertex {
     public static String NAME = "name";
     public static String SONG_TYPE = "songType";
     public static String PERFORMANCES = "performances";
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(NAME, SONG_TYPE, PERFORMANCES));
+    public static Set<String> SPECIFIC_KEYS = new HashSet<>(Arrays.asList(NAME, SONG_TYPE, PERFORMANCES));
 
     // properties
     private final String name;
@@ -48,7 +48,7 @@ public class Song extends SpecializedTinkerVertex {
     private Set<SungBy> sungByOut;
 
     public Song(Object id, TinkerGraph graph, String name, String songType, Integer performances) {
-        super(id, Song.label, graph, specificKeys);
+        super(id, Song.label, graph, SPECIFIC_KEYS);
 
         this.name = name;
         this.songType = songType;

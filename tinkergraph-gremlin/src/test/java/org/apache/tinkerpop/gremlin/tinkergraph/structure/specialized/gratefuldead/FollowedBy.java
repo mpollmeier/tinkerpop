@@ -28,12 +28,12 @@ public class FollowedBy extends SpecializedTinkerEdge {
     public static String label = "followedBy";
 
     public static String WEIGHT = "weight";
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(WEIGHT));
+    public static Set<String> SPECIFIC_KEYS = new HashSet<>(Arrays.asList(WEIGHT));
 
     private final Integer weight;
 
     public FollowedBy(Object id, Vertex outVertex, Vertex inVertex, Integer weight) {
-        super(id, outVertex, label, inVertex, specificKeys);
+        super(id, outVertex, label, inVertex, SPECIFIC_KEYS);
         this.weight = weight;
     }
 

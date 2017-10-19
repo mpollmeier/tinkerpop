@@ -31,7 +31,7 @@ public class Artist extends SpecializedTinkerVertex {
     public static String label = "artist";
 
     public static String NAME = "name";
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList(NAME));
+    public static Set<String> SPECIFIC_KEYS = new HashSet<>(Arrays.asList(NAME));
 
     // properties
     private final String name;
@@ -42,7 +42,7 @@ public class Artist extends SpecializedTinkerVertex {
     private Set<WrittenBy> writtenByIn;
 
     public Artist(Object id, TinkerGraph graph, String name) {
-        super(id, Artist.label, graph, specificKeys);
+        super(id, Artist.label, graph, SPECIFIC_KEYS);
 
         this.name = name;
     }

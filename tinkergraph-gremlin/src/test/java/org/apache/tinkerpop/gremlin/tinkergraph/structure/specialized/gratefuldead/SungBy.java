@@ -27,10 +27,10 @@ import java.util.*;
 public class SungBy extends SpecializedTinkerEdge {
     public static String label = "sungBy";
 
-    public static Set<String> specificKeys = new HashSet<>(Arrays.asList());
+    public static Set<String> SPECIFIC_KEYS = new HashSet<>(Arrays.asList());
 
     public SungBy(Object id, Vertex outVertex, Vertex inVertex) {
-        super(id, outVertex, label, inVertex, specificKeys);
+        super(id, outVertex, label, inVertex, SPECIFIC_KEYS);
     }
 
     @Override
